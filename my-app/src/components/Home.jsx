@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Download, Sparkles, ChevronLeft, ChevronRight, Plus, Trash2, Edit3, X, Check, Paperclip, FileText, Upload, Menu, XCircle } from 'lucide-react';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://slideminds-ai.onrender.com';
 
 const Home = () => {
   const [messages, setMessages] = useState([]);
