@@ -28,9 +28,22 @@ const app = express();
 
 // Middlewares
 app.use(express.json({ limit: "10mb" }));
+const allowedOrigins = [
+  "http://localhost:5173", // for local React/Vite dev
+  "https://ai-powered-chat-application-coral.vercel.app", // your Vercel frontend
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
