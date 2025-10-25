@@ -19,7 +19,6 @@ const userRoutes = require("./routes/userRoute.js");
 const chatRoutes = require("./routes/chatRoute.js");
 const presentationRoutes = require("./routes/presentationRoute.js");
 
-
 // Connect MongoDB
 connectDB();
 
@@ -28,36 +27,39 @@ const app = express();
 
 // Middlewares
 app.use(express.json({ limit: "10mb" }));
+
+// ✅ Update allowed origins here
 const allowedOrigins = [
-  "http://localhost:5173", // for local React/Vite dev
-  "https://ai-powered-chat-application-coral.vercel.app", // your Vercel frontend
+  "http://localhost:5173", // local dev
+  "https://slide-minds-ai.vercel.app", // ✅ your live frontend on Vercel
 ];
 
+// ✅ CORS setup
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow requests with no origin (like Postman)
+      // Allow requests with no origin (like Postman or internal calls)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       } else {
+        console.log("❌ Blocked by CORS:", origin);
         return callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
 
 app.use(morgan("dev"));
-app.use(express.json()); // 👈 This is essential
-
-// If you send form data instead of JSON:
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Health check
+// Health check route
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "AI PPT Chat API is running " });
+  res.status(200).json({ message: "AI PPT Chat API is running 🚀" });
 });
 
 // Routes
@@ -65,7 +67,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/presentation", presentationRoutes);
-
 
 // Global error handler
 app.use((err, req, res, next) => {
